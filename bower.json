@@ -1,0 +1,30 @@
+{
+  "name": "password-validate",
+  "version": "0.0.1",
+  "description": "Password validation JQuery plugin that allows custom rules",
+  "main": [
+    "src/jquery.passwordvalidate.js"
+  ],
+  "keywords": [
+    "jquery",
+    "plugin",
+    "jquery-plugin",
+    "password",
+    "validation",
+    "password-validate"
+  ],
+  "license": "MIT",
+  "authors": [
+    "Anthony Benavente <anthony.m.benavente@gmail.com>"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~1.11.3"
+  }
+}

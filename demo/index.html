@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Password-validate Demo</title>
+	</head>
+	<body>
+		<form>
+			<div class="fieldgroup">
+				<label for="password">Password:</label>
+				<input type="password" id="password">
+			</div>
+		</form>
+		<script src="../bower_components/jquery/dist/jquery.min.js"></script>
+		<script src="../dist/jquery.passwordvalidate.js"></script>
+		<script>
+			$(function() {
+				$('#password').passwordvalidate();
+			})
+		</script>
+	</body>
+</html>
