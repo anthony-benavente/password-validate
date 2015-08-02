@@ -3,19 +3,81 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Password-validate Demo</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="css/index.css">
 	</head>
 	<body>
-		<form>
-			<div class="fieldgroup">
-				<label for="password">Password:</label>
-				<input type="password" id="password">
+		<form action="" method="post" class="basic-grey">
+		    <h1>Contact Form
+		        <span>Please fill all the texts in the fields.</span>
+		    </h1>
+		    <label>
+		        <span>Your Name :</span>
+		        <input id="name" type="text" name="name" placeholder="Your full name" />
+		    </label>
+		    <label>
+		        <span>Your Email :</span>
+		        <input id="email" type="email" name="email" placeholder="Valid email address" />
+		    </label>
+		    <label>
+		        <span>Your Password :</span>
+		        <input id="password" type="password" name="password" placeholder="Your password" />
+		    </label>
+		    <label>
+		        <span>Confirm Your Password :</span>
+		        <input id="confirmpassword" type="password" name="confirmpassword" placeholder="This must match your password" />
+		    </label>
+			<div class="reqlist">
 			</div>
+		     <label>
+		        <span>&nbsp;</span>
+		        <input type="button" class="button" value="Send" />
+		    </label>
 		</form>
 		<script src="../bower_components/jquery/dist/jquery.min.js"></script>
 		<script src="../dist/jquery.passwordvalidate.js"></script>
 		<script>
 			$(function() {
-				$('#password').passwordvalidate();
+				$('#password').passwordvalidate({
+					targetContainer: '.reqlist',
+					rules: {
+						oneNumber: {
+							message: "Your password must have at least one number in it!",
+							criteria: function(word) {
+								return word.match(/\d/) != undefined;
+							}
+						},
+						noMatchEmail: {
+							message: "Your password cannot be your email!",
+							criteria: function(word) {
+								return word !== $('#email').val();
+							}
+						},
+						noContainName: {
+							message: "Your password cannot include your name, even if reversed.",
+							criteria: function(word) {
+								var names = $('#name').val().split(' ');
+								var firstname = names[0];
+								var lastname = names.length > 1 ? names[1] : '';
+								word = word.toLowerCase();
+								if (firstname.length === 0 || lastname.length === 0) {
+									return false;
+								} else {
+									return (word.match(firstname) ||
+											word.match(lastname) ||
+											word.match(firstname.split('').reverse().join('')) ||
+											word.match(lastname.split('').reverse().join(''))) == undefined;
+								}
+							}
+						},
+						matchesConfirm: {
+							message: "Your passwords must match.",
+							criteria: function(word) {
+								return word === $('#confirmpassword').val();
+							}
+						}
+					}
+				});
 			})
 		</script>
 	</body>
