@@ -14,11 +14,18 @@ do ($ = jQuery, window, document) ->
 
 	settings = {}
 
+	currentPassword = ""
+
+	reqList = {}
+
+	validations = {}
+
 	methods =
 		init: (options) ->
 			settings = $.extend true, $.fn[pluginName].defaults, options
 			element = $(this)
-			return initEvents().buildUi();
+			initEvents()
+			buildUi()
 		isValid: (word) ->
 			allValid = true;
 			allValid = allValid and settings.rules[rule].criteria(word) for rule of settings.rules
@@ -26,22 +33,55 @@ do ($ = jQuery, window, document) ->
 		disable: ->
 			settings.disabled = true
 		update: ->
-			# TODO:
+			currentPassword = element.val()
+			validations = checkValidations()
+			updateList()
 		onKeyUp: ->
-			# TODO:
+			methods.update()
 
 	initEvents = ->
 		element.keyup ->
 			methods.onKeyUp()
 		return element;
 
+	updateList = ->
+		for rule of settings.rules
+			matched = reqList.find('li').filter ->
+				return $(this).data('rule') == rule
+			if validations[rule]
+				matched.addClass('validate-passed')
+				matched.removeClass('validate-failed')
+			else
+				matched.addClass('validate-failed')
+				matched.removeClass('validate-passed')
+		return element
+
 	buildUi = ->
-		$('.passwordvalidate-requirements').remove();
-		if settings.insertBeforeElement then return $(settings.ui.createRequirementList()).insertBefore(element)
-		if settings.insertAfterElement then return $(settings.ui.createRequirementList()).insertAfter(element)
-		if settings.insertBeforeParent then return $(settings.ui.createRequirementList()).insertBefore(element.parent())
-		if settings.insertAfterParent then return $(settings.ui.createRequirementList()).insertAfter(element.parent())
+		reqList = $(settings.ui.createRequirementList());
+
+		if settings.targetContainer == ''
+			if settings.insertBeforeElement then return reqList.insertBefore(element)
+			if settings.insertAfterElement then return reqList.insertAfter(element)
+			if settings.insertBeforeParent then return reqList.insertBefore(element.parent())
+			if settings.insertAfterParent then return reqList.insertAfter(element.parent())
+		else
+			$(settings.targetContainer).append(reqList)
+
 		return element;
+
+	checkValidations = ->
+		validations = {}
+		for rule of settings.rules
+			validations[rule] = settings.rules[rule].criteria(currentPassword);
+		return validations
+
+	$.fn[pluginName] = (options) ->
+		if methods[options]
+			return methods[options].apply this, Array.prototype.alice.call(arguments, 1)
+		else if typeof options is 'object' or not options
+			return methods.init.apply this, arguments
+		else
+			$.error options + ' is not a valid method in password-validate'
 
 	$.fn[pluginName].defaults =
 		insertBeforeElement: false
@@ -49,7 +89,8 @@ do ($ = jQuery, window, document) ->
 		insertBeforeParent: true
 		insertAfterParent: false
 		disabled: false
-		minLength: 6
+		minLength: 6,
+		targetContainer: '',
 		rules:
 			pwdLength:
 				message: "Your password must be at least " + 6 + " characters long"
@@ -57,14 +98,6 @@ do ($ = jQuery, window, document) ->
 					return word.length >= 6
 		ui:
 			createRequirementList: ->
-				ul = $('<ul class="passwordvalidate-requirements">')
-				ul.append($('<li class="not-satisfied">').html(settings.rules[rule].message)) for rule of settings.rules
+				ul = $('<ul class="validate-requirements">')
+				ul.append($('<li>').html(settings.rules[rule].message).data('rule', rule)) for rule of settings.rules
 				return ul
-
-	$.fn[pluginName] = (options) ->
-		if methods[options]
-			return methods[options].apply this, Array.prototype.alice.call(arguments, 1)
-		else if typeof options is 'string' or not options
-			return methods.init.apply this, arguments
-		else
-			$.error options + ' is not a valid method in password-validate'
