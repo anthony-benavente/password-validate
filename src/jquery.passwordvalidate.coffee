@@ -42,6 +42,9 @@ do ($ = jQuery, window, document) ->
 	initEvents = ->
 		element.keyup ->
 			methods.onKeyUp()
+		for extraElement of settings.additionalTriggers
+			$(settings.additionalTriggers[extraElement]).keyup ->
+				methods.onKeyUp()
 		return element;
 
 	updateList = ->
@@ -90,7 +93,8 @@ do ($ = jQuery, window, document) ->
 		insertAfterParent: false
 		disabled: false
 		minLength: 6,
-		targetContainer: '',
+		targetContainer: ''
+		additionalTriggers: []
 		rules:
 			pwdLength:
 				message: "Your password must be at least " + 6 + " characters long"

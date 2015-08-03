@@ -42,9 +42,15 @@
     }
   };
   initEvents = function() {
+    var extraElement;
     element.keyup(function() {
       return methods.onKeyUp();
     });
+    for (extraElement in settings.additionalTriggers) {
+      $(settings.additionalTriggers[extraElement]).keyup(function() {
+        return methods.onKeyUp();
+      });
+    }
     return element;
   };
   updateList = function() {
@@ -108,6 +114,7 @@
     disabled: false,
     minLength: 6,
     targetContainer: '',
+    additionalTriggers: [],
     rules: {
       pwdLength: {
         message: "Your password must be at least " + 6 + " characters long",
