@@ -26,10 +26,10 @@ do ($ = jQuery, window, document) ->
 			element = $(this)
 			initEvents()
 			buildUi()
-		isValid: (word) ->
+		isValid: () ->
 			allValid = true;
-			allValid = allValid and settings.rules[rule].criteria(word) for rule of settings.rules
-			return defaultsDisabled || allValid
+			allValid = allValid and settings.rules[rule].criteria(currentPassword) for rule of settings.rules
+			return settings.disabled || allValid
 		disable: ->
 			settings.disabled = true
 		update: ->
@@ -80,7 +80,10 @@ do ($ = jQuery, window, document) ->
 
 	$.fn[pluginName] = (options) ->
 		if methods[options]
-			return methods[options].apply this, Array.prototype.alice.call(arguments, 1)
+			if (arguments.length > 1)
+				return methods[options].apply this, Array.prototype.alice.call(arguments, 1)
+			else
+				return methods[options]()
 		else if typeof options is 'object' or not options
 			return methods.init.apply this, arguments
 		else

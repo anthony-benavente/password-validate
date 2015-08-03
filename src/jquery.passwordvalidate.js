@@ -13,13 +13,13 @@
       initEvents();
       return buildUi();
     },
-    isValid: function(word) {
+    isValid: function() {
       var allValid, rule;
       allValid = true;
       for (rule in settings.rules) {
-        allValid = allValid && settings.rules[rule].criteria(word);
+        allValid = allValid && settings.rules[rule].criteria(currentPassword);
       }
-      return defaultsDisabled || allValid;
+      return settings.disabled || allValid;
     },
     disable: function() {
       return settings.disabled = true;
@@ -91,7 +91,11 @@
   };
   $.fn[pluginName] = function(options) {
     if (methods[options]) {
-      return methods[options].apply(this, Array.prototype.alice.call(arguments, 1));
+      if (arguments.length > 1) {
+        return methods[options].apply(this, Array.prototype.alice.call(arguments, 1));
+      } else {
+        return methods[options]();
+      }
     } else if (typeof options === 'object' || !options) {
       return methods.init.apply(this, arguments);
     } else {
